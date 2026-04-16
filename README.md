@@ -1,211 +1,261 @@
-WordPress Auto Deploy Script
+# WordPress Auto Deploy Script
 
-A Bash automation script to deploy WordPress on Ubuntu using either Nginx or Apache2 with MySQL or MariaDB and PHP.
+A Bash automation script to deploy **WordPress** on Ubuntu using either **Nginx** or **Apache2** with **MySQL or MariaDB** and PHP.
 
-This project demonstrates Linux administration, Bash scripting, web server configuration, database setup, and automation for DevOps environments.
+This project demonstrates Linux administration, Bash scripting, web server configuration, and database automation.
 
-The repository also includes a manual deployment guide to help understand the complete WordPress installation process before using automation.
+The repository also includes a manual deployment guide so users can understand the full process before using automation.
 
-Project Goals
+---
 
-The purpose of this project is to practice real DevOps and system administration tasks.
+# Project Goals
 
-Goals of this project:
+- Automate WordPress deployment
+- Learn server configuration
+- Understand web server + database integration
+- Practice Bash scripting for DevOps tasks
+- Build a beginner DevOps portfolio project
 
-Automate WordPress deployment using Bash scripting
-Learn how web servers work
-Understand database integration with web applications
-Practice Linux server configuration
-Build a DevOps portfolio project
-Features
-Interactive Bash deployment script
-Supports Apache2 or Nginx web server
-Supports MySQL or MariaDB database
-Automatic PHP installation
-Automatic database creation
-Automatic WordPress download and configuration
-Automatic virtual host / server block setup
-Self-signed SSL certificate generation
-Beginner-friendly manual deployment guide included
-Requirements
+---
+
+# Features
+
+- Interactive Bash deployment
+- Supports **Apache2 or Nginx**
+- Supports **MySQL or MariaDB**
+- Automatic PHP installation
+- Automatic database creation
+- Automatic WordPress configuration
+- Automatic virtual host setup
+- Self-signed SSL certificate generation
+
+---
+
+# Requirements
 
 System requirements:
 
-Ubuntu 20.04 / 22.04 / 24.04
-Root or sudo privileges
-Internet connection
+- Ubuntu 20.04 / 22.04 / 24.04
+- Root or sudo privileges
+- Internet connection
 
 Recommended:
 
-Fresh Ubuntu installation
-Minimum 2GB RAM
-Repository Structure
+- Fresh Ubuntu installation
+- Minimum 2GB RAM
+
+---
+
+# Repository Structure
+
+```
 wordpress-auto-deploy
 │
 ├── wp-deploy.sh
 ├── README.md
 └── configs
-Manual WordPress Deployment Guide
+```
+
+---
+
+# Manual WordPress Deployment Guide
 
 This section explains how to deploy WordPress manually step by step.
 
-Understanding the manual process helps understand what the automation script does.
+---
 
-1 Update System
+# 1 Update System
 
-Update package list and upgrade system packages.
-
+```
 sudo apt update
 sudo apt upgrade -y
-2 Install Web Server
+```
 
-Choose one web server.
+---
 
-Install Apache:
-
-sudo apt install apache2 -y
-
-Install Nginx:
-
-sudo apt install nginx -y
-
-Start service:
-
-sudo systemctl start apache2
-sudo systemctl enable apache2
-
-or
-
-sudo systemctl start nginx
-sudo systemctl enable nginx
-3 Configure Firewall (UFW)
-
-Allow web traffic.
-
-Check firewall status:
-
-sudo ufw status
-
-Allow HTTP and HTTPS:
-
-sudo ufw allow 80
-sudo ufw allow 443
-
-Or allow profiles:
+# 2 Install Web Server
 
 Apache:
 
-sudo ufw allow "Apache Full"
+```
+sudo apt install apache2 -y
+```
 
 Nginx:
 
-sudo ufw allow "Nginx Full"
+```
+sudo apt install nginx -y
+```
 
-Reload firewall:
+Start service:
 
+```
+sudo systemctl enable apache2
+sudo systemctl start apache2
+```
+
+or
+
+```
+sudo systemctl enable nginx
+sudo systemctl start nginx
+```
+
+---
+
+# 3 Configure Firewall
+
+Allow HTTP and HTTPS traffic.
+
+```
+sudo ufw allow 80
+sudo ufw allow 443
 sudo ufw reload
-4 Install PHP
+```
 
-WordPress requires PHP and additional modules.
+Apache profile:
 
+```
+sudo ufw allow "Apache Full"
+```
+
+Nginx profile:
+
+```
+sudo ufw allow "Nginx Full"
+```
+
+---
+
+# 4 Install PHP
+
+```
 sudo apt install php php-fpm php-mysql php-curl php-xml php-mbstring php-zip php-gd -y
+```
 
-Check PHP version:
+Check version:
 
+```
 php -v
-5 Install Database Server
+```
 
-Choose one database server.
+---
 
-Install MySQL:
+# 5 Install Database
 
+MySQL:
+
+```
 sudo apt install mysql-server -y
+```
 
-Install MariaDB:
+MariaDB:
 
+```
 sudo apt install mariadb-server -y
+```
 
-Run secure installation:
+Secure database installation:
 
+```
 sudo mysql_secure_installation
+```
 
-Follow prompts to secure the database server.
+---
 
-6 Create WordPress Database
+# 6 Create WordPress Database
 
-Login to database:
+Login:
 
+```
 sudo mysql
+```
 
 Create database:
 
+```
 CREATE DATABASE wordpressdb;
+```
 
-Create database user:
+Create user:
 
+```
 CREATE USER 'wpuser'@'localhost' IDENTIFIED BY 'password';
+```
 
-Grant privileges:
+Grant permissions:
 
+```
 GRANT ALL PRIVILEGES ON wordpressdb.* TO 'wpuser'@'localhost';
+```
 
 Apply changes:
 
+```
 FLUSH PRIVILEGES;
 EXIT;
-7 Download WordPress
+```
 
-Download latest WordPress package.
+---
 
+# 7 Download WordPress
+
+```
 cd /tmp
 curl -O https://wordpress.org/latest.tar.gz
-
-Extract archive:
-
 tar -xvf latest.tar.gz
+```
 
-Move files to web directory:
+Move files:
 
+```
 sudo cp -r wordpress /var/www/mysite
-
-Set ownership:
-
-sudo chown -R www-data:www-data /var/www/mysite
+```
 
 Set permissions:
 
+```
+sudo chown -R www-data:www-data /var/www/mysite
 sudo chmod -R 755 /var/www/mysite
-8 Configure WordPress
+```
 
-Navigate to site directory.
+---
 
+# 8 Configure WordPress
+
+```
 cd /var/www/mysite
-
-Copy configuration file:
-
 cp wp-config-sample.php wp-config.php
+```
 
 Edit configuration:
 
+```
 nano wp-config.php
+```
 
-Update database settings:
+Update:
 
+```
 DB_NAME
 DB_USER
 DB_PASSWORD
-9 Configure Apache Virtual Host
+```
 
-Create new virtual host:
+---
 
+# 9 Configure Apache Virtual Host
+
+```
 sudo nano /etc/apache2/sites-available/mysite.conf
+```
 
-Example configuration:
+Example:
 
+```
 <VirtualHost *:80>
 
 ServerName mysite.local
-
 DocumentRoot /var/www/mysite
 
 <Directory /var/www/mysite>
@@ -213,38 +263,34 @@ AllowOverride All
 </Directory>
 
 </VirtualHost>
-
-Enable Apache rewrite module:
-
-sudo a2enmod rewrite
+```
 
 Enable site:
 
+```
+sudo a2enmod rewrite
 sudo a2ensite mysite.conf
-
-Disable default site:
-
 sudo a2dissite 000-default.conf
-
-Restart Apache:
-
 sudo systemctl restart apache2
-10 Configure Nginx Server Block
+```
 
-Create configuration file:
+---
 
+# 10 Configure Nginx Server Block
+
+```
 sudo nano /etc/nginx/sites-available/mysite
+```
 
-Example configuration:
+Example:
 
+```
 server {
 
 listen 80;
-
 server_name mysite.local;
 
 root /var/www/mysite;
-
 index index.php index.html;
 
 location / {
@@ -256,110 +302,115 @@ include snippets/fastcgi-php.conf;
 fastcgi_pass unix:/run/php/php-fpm.sock;
 }
 
-location ~ /\.ht {
-deny all;
 }
-
-}
+```
 
 Enable site:
 
+```
 sudo ln -s /etc/nginx/sites-available/mysite /etc/nginx/sites-enabled/
-
-Test configuration:
-
 sudo nginx -t
-
-Restart Nginx:
-
 sudo systemctl restart nginx
-11 Configure Local Domain (Important)
+```
 
-For local testing, edit hosts file.
+---
 
+# 11 Configure Local Domain
+
+Edit hosts file:
+
+```
 sudo nano /etc/hosts
+```
 
-Add this line:
+Add line:
 
+```
 127.0.0.1 mysite.local
+```
 
-Save and exit.
+---
 
-12 Complete WordPress Installation
+# 12 Complete WordPress Setup
 
-Open browser and visit:
+Open browser:
 
+```
 http://mysite.local
+```
 
-Follow WordPress installation wizard.
+Complete WordPress installation:
 
-Set:
+- Site title
+- Admin username
+- Admin password
+- Email address
 
-Site title
-Admin username
-Admin password
-Email address
+---
 
-After completion, WordPress will be installed successfully.
-
-Automated Deployment
-
-Instead of performing the manual steps above, you can use the automation script.
+# Automated Deployment
 
 Make script executable:
 
+```
 chmod +x wp-deploy.sh
+```
 
-Run the script:
+Run script:
 
+```
 sudo bash wp-deploy.sh
+```
 
-The script will ask for:
+Script will ask for:
 
-Web server choice
-Database choice
-Domain name
-Database name
-Database user
-Database password
-
-The script will automatically:
-
-Install required packages
-Configure web server
-Create database
-Install WordPress
-Configure virtual host
-Generate SSL certificate
-Example Deployment
-
-Example input during script execution:
-
-Web Server: Nginx
-Database: MySQL
-Domain: mysite.local
-Database Name: wordpressdb
-Database User: wpuser
+- Web server
+- Database
+- Domain
+- Database name
+- Database user
+- Database password
 
 After deployment open:
 
-https://mysite.local
-Learning Outcomes
+```
+https://your-domain
+```
+
+---
+
+# Example
+
+```
+Web server: Nginx
+Database: MySQL
+Domain: mysite.local
+DB Name: wordpressdb
+DB User: wpuser
+```
+
+---
+
+# Learning Outcomes
 
 This project helps understand:
 
-Linux server administration
-Bash scripting automation
-Web server configuration
-Database management
-WordPress deployment workflow
-DevOps automation concepts
-Author
+- Linux server administration
+- Bash scripting automation
+- Web server configuration
+- Database integration
+- WordPress deployment workflow
+- DevOps automation basics
 
-Imran Moosa
+---
 
+# Author
+
+Imran Moosa  
 DevOps & Cloud Computing Student
 
-License
+---
 
-This project is open-source and available for learning purposes.
+# License
+
+Open-source project for learning and educational purposes.
